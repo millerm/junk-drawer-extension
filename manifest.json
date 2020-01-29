@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+  "name": "Save items chrome extension",
+  "description": "This extension allows you to save links, media, pages, and highlighted text.",
+  "version": "2.1",
+  "icons": {
+    "16": "images/get_started16.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started48.png",
+    "128": "images/get_started128.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "images/get_started16.png",
+      "32": "images/get_started32.png",
+      "48": "images/get_started48.png",
+      "128": "images/get_started128.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "declarativeContent",
+    "storage",
+    "identity",
+    "https://*/*"
+  ],
+  "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "oauth2": {
+    "client_id": "50718619020-8hi41ak3bg6rmch0o6cigt6dvfbo909k.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjtmOHBk+SK4STibjyoYqPkySUbHP9G5ab1/GVViEi93LrqWaLdtNDIPmeDtIoW3a8mqIjJm39KGDf7XLbfkG31NqJx/T60PgxvFBNCHi8Bb+AcjaKF7Xu+epmhdcJD6RLJuIw6iPK+n1acxS2OxU/oD+FcSolDO4BXAdFQJYMZm6ekw/Dw/9CmvfAdOgY+1G0nX1aIFjxwq6uA2um0qPck3qNLGHgyCPl6qinGQbyzPVPesg2w0YSWL1eYfw1bSmyKG1sET5HYC8bXT8c5fwAIvnNW4QCo+SVvGW6/3rxSsiLdBvBbDdcxWBbYxeehQCEYZUcyWBjVZ0rL53OYdT0wIDAQAB"
+}
