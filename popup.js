@@ -30,14 +30,14 @@ function initApp() {
         const linkText = doc.data().text;
         const linkSrc = doc.data().pageUrl;
 
-        return buildLinkListItem(linkSrc, linkText);
+        return linkFactory(linkSrc, linkText);
       }).forEach((listItem) => document.getElementById(SELECTORS.TEXT_SELECTIONS_LIST).appendChild(listItem));
 
       pageSelections.docs.map((doc) => {
         const linkText = doc.data().pageUrl;
         const linkSrc = doc.data().pageUrl;
 
-        return buildLinkListItem(linkSrc, linkText);
+        return linkFactory(linkSrc, linkText);
       }).forEach((listItem) => document.getElementById(SELECTORS.PAGES_LIST).appendChild(listItem));
 
       mediaReferences.docs.map((doc) => {
@@ -45,14 +45,14 @@ function initApp() {
         const linkText = doc.data().linkUrl;
         const linkSrc = doc.data().linkUrl;
 
-        return buildLinkListItem(linkSrc, linkText);
+        return linkFactory(linkSrc, linkText);
       }).forEach((listItem) => document.getElementById(SELECTORS.MEDIA_LIST).appendChild(listItem));
 
       linkReferences.docs.map((doc) => {
         const linkText = doc.data().selectionText;
         const linkSrc = doc.data().linkUrl;
 
-        return buildLinkListItem(linkSrc, linkText);
+        return linkFactory(linkSrc, linkText);
       }).forEach((listItem) => document.getElementById(SELECTORS.LINKS_LIST).appendChild(listItem));
     } else {
       // Google Auth

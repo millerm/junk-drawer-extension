@@ -40,9 +40,11 @@ const contentClickHandler = (clickData) => {
  * @param {String} [action] - An enum indicating which action should be dispatched (example "INSERT")
  * @return {Object}
  */
-const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) => {
+const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action) => {
   // TODO: Handle multiple actions
-
+  if (!action) {
+    return;
+  }
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
     return Object.freeze({
