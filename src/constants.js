@@ -13,3 +13,7 @@ const COLLECTIONS = {
   MEDIA_REFERENCES: 'media-references',
   LINK_REFERENCES: 'link-references',
 }
+
+const ACTIONS = {
+  INSERT: 'insert'
+}

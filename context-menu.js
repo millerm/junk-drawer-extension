@@ -19,16 +19,15 @@ chrome.contextMenus.create(junkDrawerContextMenu);
  * @return {void}
  */
 const contentClickHandler = (clickData) => {
-  console.log(clickData)
   const { menuItemId } = clickData;
 
   if (!menuItemId || menuItemId !== junkDrawerContextMenu.id) {
     return;
   }
 
-  const formattedEvent = eventFormatter(clickData);
+  const event = eventFactory(clickData);
 
-  dispatchFireStoreCreateEvent(formattedEvent);
+  dispatchFireStoreAction(event, ACTIONS.INSERT);
 }
 
 /**
@@ -38,64 +37,76 @@ const contentClickHandler = (clickData) => {
  * @param {String} [clickData.linkUrl] - If the element is a link, the URL it points to.
  * @param {String} [clickData.pageUrl] - The URL of the page where the menu item was clicked. This property is not set if the click occured in a context where there is no current page, such as in a launcher context menu.
  * @param {String} [clickData.selectionText] - The text for the context selection, if any.
+ * @param {String} [action] - An enum indicating which action should be dispatched (example "INSERT")
+ * @return {Object}
  */
-const eventFormatter = ({ mediaType, linkUrl, pageUrl, selectionText }) => {
+const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) => {
+  // TODO: Handle multiple actions
+
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
-    return {
+    return Object.freeze({
+      action,
       collection: COLLECTIONS.PAGE_SELECTIONS,
       data: {
         pageUrl
       }
-    };
+    });
   }
 
   // If there is a present link but no media type, a link was selected.
   if (linkUrl && !mediaType) {
     // The selectionText is the link title
-    return {
+    return Object.freeze({
+      action,
       collection: COLLECTIONS.LINK_REFERENCES,
       data: {
         linkUrl,
         pageUrl,
         selectionText,
       }
-    }
+    });
   }
 
   if (mediaType) {
-    return {
+    return Object.freeze({
+      action,
       collection: COLLECTIONS.MEDIA_REFERENCES,
       data: {
         linkUrl,
         mediaType,
         pageUrl
       }
-    }
+    });
   }
 
   if (selectionText && !linkUrl) {
     // just text was selected
-    return {
+    return Object.freeze({
+      action,
       collection: COLLECTIONS.TEXT_SELECTIONS,
       data: {
         text: selectionText,
         pageUrl,
       }
-    }
+    });
   }
+  
+  return {};
 }
 
 /**
- * Handles the dispatching of a firestore insert
+ * Handles the dispatching of an action to firestore
  *
+ * @param {String} config.action - an enum indicating which action should be dispatched (example "INSERT")
  * @param {String} config.collection - an enum value that represents the collection that the record should be added to
  * @param {Object} config.data - the data that should be inserted into the collection
  * @return {void}
  */
-const dispatchFireStoreCreateEvent = async ({ collection, data }) => {
-  const { uid, displayName, email } = firebase.auth().currentUser;
+const dispatchFireStoreAction = async ({ action, collection, data }) => {
+  // TODO: Handle multiple actions
 
+  const { uid, displayName, email } = firebase.auth().currentUser;
   const db = firebase.firestore();
   const userRef = await db.collection("users").doc(uid).get();
 
@@ -112,14 +123,13 @@ const dispatchFireStoreCreateEvent = async ({ collection, data }) => {
   }
 
   try {
-    const item = await db.collection(collection).add({
+    await db.collection(collection).add({
       ...data,
       created: firebase.firestore.FieldValue.serverTimestamp(),
       user: uid
     });
-
-    console.log(item.get())
   } catch(error) {
+    // TODO: Better error handling here
     console.error(error);
   }
 }
