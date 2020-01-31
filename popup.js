@@ -27,32 +27,44 @@ function initApp() {
       }
 
       textSelections.docs.map((doc) => {
-        const linkText = doc.data().text;
-        const linkSrc = doc.data().pageUrl;
+        const linkData = Object.freeze({
+          id: doc.id,
+          href: doc.data().pageUrl,
+          displayText: doc.data().text
+        })
 
-        return linkFactory(linkSrc, linkText);
+        return linkFactory(linkData);
       }).forEach((listItem) => document.getElementById(SELECTORS.TEXT_SELECTIONS_LIST).appendChild(listItem));
 
       pageSelections.docs.map((doc) => {
-        const linkText = doc.data().pageUrl;
-        const linkSrc = doc.data().pageUrl;
+        const linkData = Object.freeze({
+          id: doc.id,
+          href: doc.data().pageUrl,
+          displayText: doc.data().pageUrl
+        })
 
-        return linkFactory(linkSrc, linkText);
+        return linkFactory(linkData);
       }).forEach((listItem) => document.getElementById(SELECTORS.PAGES_LIST).appendChild(listItem));
 
       mediaReferences.docs.map((doc) => {
         // The text and the link should be the same for media
-        const linkText = doc.data().linkUrl;
-        const linkSrc = doc.data().linkUrl;
+        const linkData = Object.freeze({
+          id: doc.id,
+          href: doc.data().linkUrl,
+          displayText: doc.data().linkUrl
+        });
 
-        return linkFactory(linkSrc, linkText);
+        return linkFactory(linkData);
       }).forEach((listItem) => document.getElementById(SELECTORS.MEDIA_LIST).appendChild(listItem));
 
       linkReferences.docs.map((doc) => {
-        const linkText = doc.data().selectionText;
-        const linkSrc = doc.data().linkUrl;
+        const linkData = Object.freeze({
+          id: doc.id,
+          href: doc.data().linkUrl,
+          displayText: doc.data().selectionText
+        });
 
-        return linkFactory(linkSrc, linkText);
+        return linkFactory(linkData);
       }).forEach((listItem) => document.getElementById(SELECTORS.LINKS_LIST).appendChild(listItem));
     } else {
       // Google Auth
@@ -62,7 +74,7 @@ function initApp() {
     }
     document.getElementById('quickstart-button').disabled = false;
   });
-debugger;
+
   document.getElementById('quickstart-button').addEventListener('click', startSignIn, false);
 }
 

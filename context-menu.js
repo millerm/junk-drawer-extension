@@ -25,9 +25,9 @@ const contentClickHandler = (clickData) => {
     return;
   }
 
-  const event = eventFactory(clickData);
+  const event = eventFactory(clickData, ACTIONS.INSERT);
 
-  dispatchFireStoreAction(event, ACTIONS.INSERT);
+  dispatchFireStoreAction(event);
 }
 
 /**
@@ -40,11 +40,7 @@ const contentClickHandler = (clickData) => {
  * @param {String} [action] - An enum indicating which action should be dispatched (example "INSERT")
  * @return {Object}
  */
-const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action) => {
-  // TODO: Handle multiple actions
-  if (!action) {
-    return;
-  }
+const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) => {
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
     return Object.freeze({
@@ -93,7 +89,7 @@ const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action) =>
       }
     });
   }
-  
+
   return {};
 }
 
@@ -105,7 +101,7 @@ const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action) =>
  * @param {Object} config.data - the data that should be inserted into the collection
  * @return {void}
  */
-const dispatchFireStoreAction = async ({ action, collection, data }) => {
+const dispatchFireStoreAction = async ({ action = '', collection, data }) => {
   // TODO: Handle multiple actions
 
   const { uid, displayName, email } = firebase.auth().currentUser;
