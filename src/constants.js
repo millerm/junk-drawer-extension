@@ -14,6 +14,13 @@ const COLLECTIONS = {
   LINK_REFERENCES: 'link-references',
 }
 
+const COLLECTIONS_ID_NAME_MAP = {
+  [COLLECTIONS.PAGE_SELECTIONS]: 'pages-list',
+  [COLLECTIONS.TEXT_SELECTIONS]: 'text-selections-list',
+  [COLLECTIONS.MEDIA_REFERENCES]: 'media-list',
+  [COLLECTIONS.LINK_REFERENCES]: 'links-list'
+};
+
 const ACTIONS = {
   INSERT: 'insert'
 }

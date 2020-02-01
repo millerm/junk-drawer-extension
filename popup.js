@@ -30,7 +30,8 @@ function initApp() {
         const linkData = Object.freeze({
           id: doc.id,
           href: doc.data().pageUrl,
-          displayText: doc.data().text
+          displayText: doc.data().text,
+          collection: COLLECTIONS.TEXT_SELECTIONS
         })
 
         return linkFactory(linkData);
@@ -40,7 +41,8 @@ function initApp() {
         const linkData = Object.freeze({
           id: doc.id,
           href: doc.data().pageUrl,
-          displayText: doc.data().pageUrl
+          displayText: doc.data().pageUrl,
+          collection: COLLECTIONS.PAGE_SELECTIONS
         })
 
         return linkFactory(linkData);
@@ -51,7 +53,8 @@ function initApp() {
         const linkData = Object.freeze({
           id: doc.id,
           href: doc.data().linkUrl,
-          displayText: doc.data().linkUrl
+          displayText: doc.data().linkUrl,
+          collection: COLLECTIONS.MEDIA_REFERENCES
         });
 
         return linkFactory(linkData);
@@ -61,7 +64,8 @@ function initApp() {
         const linkData = Object.freeze({
           id: doc.id,
           href: doc.data().linkUrl,
-          displayText: doc.data().selectionText
+          displayText: doc.data().selectionText,
+          collection: COLLECTIONS.LINK_REFERENCES
         });
 
         return linkFactory(linkData);
@@ -74,8 +78,54 @@ function initApp() {
     }
     document.getElementById('quickstart-button').disabled = false;
   });
-
+  document.addEventListener('click', handleClick, false);
   document.getElementById('quickstart-button').addEventListener('click', startSignIn, false);
+}
+
+/**
+ * Event delegation - one click handler to rule them all
+ * @param {ClickEvent} event - The click event
+ */
+function handleClick(event) {
+  if (event.target.matches('.delete-button')) {
+    handleClickDelete(event.target);
+  }
+}
+
+ /**
+ * Handles the validation of record information before deleting
+ *
+ * @param {String} collection - The name of the collection that the record should be deleted from
+ * @param {String} id - The id of the record that should be deleted
+ * @return {void}
+ */
+function handleClickDelete(target) {
+  // The listItem is the parent node of the target
+  const listItem = target.parentNode;
+  const id = listItem.getAttribute('value');
+  const collection = listItem.getAttribute('data-collection');
+
+  if (!collection) {
+    console.error('Missing or invalid argument `collection` was passed to method: `handleClickDelete`')
+
+    return;
+  }
+
+  if (!id) {
+    console.error('Missing or invalid argument `id` was passed to method: `handleClickDelete`');
+
+    return;
+  }
+
+  // Delete the list item from the DOM:
+  // 1.) Determine which <ul> it's in
+  const listClassName = COLLECTIONS_ID_NAME_MAP[collection];
+  const list = document.getElementById(listClassName);
+  // 2.) Remove the list item
+  list.removeChild(listItem);
+
+  // Delete the actual record
+  deleteRecord(collection, id);
 }
 
 /**
@@ -111,7 +161,6 @@ function startAuth(interactive) {
  * Starts the sign-in process.
  */
 function startSignIn() {
-  debugger;
   document.getElementById('quickstart-button').disabled = true;
   if (firebase.auth().currentUser) {
     firebase.auth().signOut();

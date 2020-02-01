@@ -62,5 +62,6 @@ code {
 }
 .list-item {
   padding: 4px 12px;
-  /* background-color: rgb(41, 42, 45); */
+  display: flex;
+  justify-content: space-between;
 }
