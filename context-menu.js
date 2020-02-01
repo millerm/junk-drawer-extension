@@ -37,10 +37,11 @@ function contentClickHandler(clickData) {
  * @param {String} [clickData.linkUrl] - If the element is a link, the URL it points to.
  * @param {String} [clickData.pageUrl] - The URL of the page where the menu item was clicked. This property is not set if the click occured in a context where there is no current page, such as in a launcher context menu.
  * @param {String} [clickData.selectionText] - The text for the context selection, if any.
+ * @param {String} [clickData.srcUrl] - The source URL of the media
  * @param {String} [action] - An enum indicating which action should be dispatched (example "INSERT")
  * @return {Object}
  */
-function eventFactory({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) {
+function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, action = ACTIONS.INSERT) {
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
     return Object.freeze({
@@ -66,12 +67,12 @@ function eventFactory({ mediaType, linkUrl, pageUrl, selectionText }, action = A
     });
   }
 
-  if (mediaType) {
+  if (mediaType && srcUrl) {
     return Object.freeze({
       action,
       collection: COLLECTIONS.MEDIA_REFERENCES,
       data: {
-        linkUrl,
+        srcUrl,
         mediaType,
         pageUrl
       }

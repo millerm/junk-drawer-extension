@@ -52,7 +52,7 @@ function initApp() {
         // The text and the link should be the same for media
         const linkData = Object.freeze({
           id: doc.id,
-          href: doc.data().linkUrl,
+          href: doc.data().srcUrl,
           displayText: doc.data().linkUrl,
           collection: COLLECTIONS.MEDIA_REFERENCES
         });
@@ -143,7 +143,6 @@ function startAuth(interactive) {
       // Authorize Firebase with the OAuth Access Token.
       var credential = firebase.auth.GoogleAuthProvider.credential(null, token);
       firebase.auth().signInWithCredential(credential).catch(function(error) {
-        debugger;
         // The OAuth token might have been invalidated. Lets' remove it from cache.
         if (error.code === 'auth/invalid-credential') {
           chrome.identity.removeCachedAuthToken({token: token}, function() {
