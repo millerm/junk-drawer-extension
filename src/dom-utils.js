@@ -1,7 +1,6 @@
 /**
  * Takes a link source and display text and returns an `li` dom node
  *
- * TODO: Add `x` delete button
  * TODO: This should also probably be a class.
  *
  * @param {String} config.id - The firestore id
