@@ -18,7 +18,7 @@ chrome.contextMenus.create(junkDrawerContextMenu);
  * @param {String} [clickData.selectionText] - The text for the context selection, if any.
  * @return {void}
  */
-const contentClickHandler = (clickData) => {
+function contentClickHandler(clickData) {
   const { menuItemId } = clickData;
 
   if (!menuItemId || menuItemId !== junkDrawerContextMenu.id) {
@@ -40,7 +40,7 @@ const contentClickHandler = (clickData) => {
  * @param {String} [action] - An enum indicating which action should be dispatched (example "INSERT")
  * @return {Object}
  */
-const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) => {
+function eventFactory({ mediaType, linkUrl, pageUrl, selectionText }, action = ACTIONS.INSERT) {
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
     return Object.freeze({
@@ -101,7 +101,7 @@ const eventFactory = ({ mediaType, linkUrl, pageUrl, selectionText }, action = A
  * @param {Object} config.data - the data that should be inserted into the collection
  * @return {void}
  */
-const dispatchFireStoreAction = async ({ action = '', collection, data }) => {
+async function dispatchFireStoreAction({ action = '', collection, data }) {
   // TODO: Handle multiple actions
 
   const { uid, displayName, email } = firebase.auth().currentUser;

@@ -2,11 +2,9 @@
 /**
  * retrieves all records in all collections for a specific user
  *
- * TODO: Rename this to something more specific
- *
  * @param {String} uid - The users id
  */
-const fetchData = async (uid) => {
+async function fetchRecords(uid) {
   const db = firebase.firestore();
 
   try {
@@ -34,7 +32,7 @@ const fetchData = async (uid) => {
  * @param {String} collection - The collection the record should be deleted from
  * @param {String} id - The id of the record that should be deleted
  */
-const deleteRecord = async (collection, id) => {
+async function deleteRecord(collection, id) {
   const db = firebase.firestore();
 
   try {

@@ -8,7 +8,7 @@
  * @param {String} config.displayText - The text that should be displayed as the link title
  * @param {String} config.collection - The collection the record is from
  */
-const linkFactory = ({ id, href, displayText, collection }) => {
+function linkFactory ({ id, href, displayText, collection }) {
   const listItem = document.createElement('li');
 
   listItem.setAttribute('class', 'list-item');

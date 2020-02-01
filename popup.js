@@ -18,7 +18,7 @@ function initApp() {
         pageSelections,
         mediaReferences,
         linkReferences
-      } = await fetchData(uid);
+      } = await fetchRecords(uid);
 
       if (error) {
         // TODO: Handle this better
