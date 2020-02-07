@@ -24,12 +24,11 @@ function linkFactory ({ id, href, displayText, collection }) {
 
   linkItem.appendChild(linkText);
 
-  // Build the `x` button
+  // Build the delete button
   const deleteButton = document.createElement('button');
-  const buttonText = document.createTextNode('x');
-
+  deleteButton.innerHTML = 'Delete';
   deleteButton.setAttribute('class', 'delete-button');
-  deleteButton.appendChild(buttonText);
+  
 
   listItem.appendChild(linkItem);
   listItem.appendChild(deleteButton)

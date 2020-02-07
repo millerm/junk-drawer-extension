@@ -1,0 +1,79 @@
+@font-face {
+  src: url('./fonts/Manrope-SemiBold.otf');
+  font-family: nosBold;
+}
+
+@font-face {
+  src: url('./fonts/Manrope-Medium.otf');
+  font-family: nosMedium;
+}
+
+ html, body {
+  font-family: 'nosMedium';
+  background-color: #363c48;
+  /* background-color: rgb(32, 33, 36); */
+  color: hsla(0,0%,100%,0.88);
+}
+body {
+  width: 400px;
+  min-height: 400px;
+  margin: 0;
+}
+.container {
+  padding: 12px;
+}
+a {
+  text-decoration: none;
+}
+li a {
+  text-decoration: underline;
+  color: #0288d1;
+}
+.mdl-grid {
+  max-width: 1024px;
+  margin: auto;
+}
+.mdl-layout__header-row {
+  padding: 0;
+}
+.quickstart-user-details-container {
+  margin-top: 20px;
+  line-height: 25px;
+}
+#quickstart-sign-in-status {
+  font-weight: bold;
+}
+pre {
+  overflow-x: scroll;
+  line-height: 18px;
+}
+code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.header {
+  padding: 0 12px;
+}
+.list {
+  list-style: none;
+  padding: 0;
+}
+.list-title {
+  font-family: 'nosBold';
+  padding: 4px 12px;
+  line-height: 20px;
+}
+.list-item {
+  padding: 4px 12px;
+  display: flex;
+  justify-content: space-between;
+}
+/* .delete-button {
+  background: transparent;
+  color: white;
+  height: 20px;
+  width: 20px;
+} */
+.button-icon {
+  fill: white;
+}
