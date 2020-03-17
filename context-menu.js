@@ -2,14 +2,14 @@
 
 // firebase.initializeApp(firebaseConfig);
 
-const junkDrawerContextMenu = {
-  title: 'Junk Drawer',
-  id: 'junkDrawer',
+const shareThatAppContextMenu = {
+  title: 'Save To ShareThat',
+  id: 'shareThatAppId',
   contexts: ["all"]
 };
 
 // Create the context menu
-chrome.contextMenus.create(junkDrawerContextMenu);
+chrome.contextMenus.create(shareThatAppContextMenu);
 
 /**
  * Handles the selection of content. Does any validation or sanitization.
@@ -25,7 +25,7 @@ chrome.contextMenus.create(junkDrawerContextMenu);
 function contentClickHandler(clickData) {
   const { menuItemId } = clickData;
 
-  if (!menuItemId || menuItemId !== junkDrawerContextMenu.id) {
+  if (!menuItemId || menuItemId !== shareThatAppContextMenu.id) {
     return;
   }
 
@@ -126,7 +126,7 @@ async function dispatchFireStoreAction({ action = '', collection, data }) {
       type: "basic",
       title: "Success!",
       message: "Your item was saved successfully!",
-      iconUrl: 'images/get_started16.png'
+      iconUrl: 'images/st-logo.png'
     });
 
   } catch(error) {
@@ -136,7 +136,7 @@ async function dispatchFireStoreAction({ action = '', collection, data }) {
       type: "basic",
       title: "Error!",
       message: error.message,
-      iconUrl: 'images/get_started16.png'
+      iconUrl: 'images/st-logo.png'
     });
   }
 }
