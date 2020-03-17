@@ -1,3 +1,7 @@
+// import { firebaseConfig } from './src/config.js';
+
+// firebase.initializeApp(firebaseConfig);
+
 const junkDrawerContextMenu = {
   title: 'Junk Drawer',
   id: 'junkDrawer',
@@ -42,13 +46,17 @@ function contentClickHandler(clickData) {
  * @return {Object}
  */
 function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, action = ACTIONS.INSERT) {
+  const { uid } = firebase.auth().currentUser;
+
   // If only pageUrl, then treat it like a bookmark
   if (pageUrl && !mediaType && !linkUrl && !selectionText) {
     return Object.freeze({
       action,
       collection: COLLECTIONS.PAGE_SELECTIONS,
       data: {
-        pageUrl
+        pageUrl,
+        createdAt: new Date().toISOString(),
+        uid
       }
     });
   }
@@ -63,6 +71,8 @@ function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, ac
         linkUrl,
         pageUrl,
         selectionText,
+        createdAt: new Date().toISOString(),
+        uid
       }
     });
   }
@@ -74,7 +84,9 @@ function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, ac
       data: {
         srcUrl,
         mediaType,
-        pageUrl
+        pageUrl,
+        createdAt: new Date().toISOString(),
+        uid
       }
     });
   }
@@ -87,6 +99,8 @@ function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, ac
       data: {
         text: selectionText,
         pageUrl,
+        createdAt: new Date().toISOString(),
+        uid
       }
     });
   }
@@ -103,33 +117,27 @@ function eventFactory({ mediaType, linkUrl, pageUrl, selectionText, srcUrl }, ac
  * @return {void}
  */
 async function dispatchFireStoreAction({ action = '', collection, data }) {
-  // TODO: Handle multiple actions
-
-  const { uid, displayName, email } = firebase.auth().currentUser;
   const db = firebase.firestore();
-  const userRef = await db.collection("users").doc(uid).get();
-
-  // TODO: Probably move this user check/creation to the background auth
-  if (!userRef.exists) {
-    try {
-      await db.collection('users').doc(uid).set({
-        displayName,
-        email
-      });
-    } catch(error) {
-      console.error(error);
-    }
-  }
 
   try {
-    await db.collection(collection).add({
-      ...data,
-      created: firebase.firestore.FieldValue.serverTimestamp(),
-      user: uid
+    const doc = await db.collection(collection).add(data);
+
+    chrome.notifications.create(doc.id, {
+      type: "basic",
+      title: "Success!",
+      message: "Your item was saved successfully!",
+      iconUrl: 'images/get_started16.png'
     });
+
   } catch(error) {
-    // TODO: Better error handling here
     console.error(error);
+
+    chrome.notifications.create(doc.id, {
+      type: "basic",
+      title: "Error!",
+      message: error.message,
+      iconUrl: 'images/get_started16.png'
+    });
   }
 }
 

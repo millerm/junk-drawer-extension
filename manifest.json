@@ -27,6 +27,7 @@
     "declarativeContent",
     "storage",
     "identity",
+    "notifications",
     "https://*/*"
   ],
   "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",

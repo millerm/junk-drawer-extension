@@ -1,3 +1,5 @@
+import { firebaseConfig } from './src/config.js';
+
 firebase.initializeApp(firebaseConfig);
 
 function initApp() {
@@ -5,79 +7,22 @@ function initApp() {
   firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
       // User is signed in.
-      const { displayName, uid } = user;
+
+      const { email } = user;
+      // Hide input form
+      hideSignInForm();
 
       document.getElementById('quickstart-button').textContent = 'Sign out';
-      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `${displayName}'s Saved Items`;
-
-      // Fetch lists
-      // TODO: Cache these
-      const {
-        error,
-        textSelections,
-        pageSelections,
-        mediaReferences,
-        linkReferences
-      } = await fetchRecords(uid);
-
-      if (error) {
-        // TODO: Handle this better
-        console.error(error);
-        return;
-      }
-
-      textSelections.docs.map((doc) => {
-        const linkData = Object.freeze({
-          id: doc.id,
-          href: doc.data().pageUrl,
-          displayText: doc.data().text,
-          collection: COLLECTIONS.TEXT_SELECTIONS
-        })
-
-        return linkFactory(linkData);
-      }).forEach((listItem) => document.getElementById(SELECTORS.TEXT_SELECTIONS_LIST).appendChild(listItem));
-
-      pageSelections.docs.map((doc) => {
-        const linkData = Object.freeze({
-          id: doc.id,
-          href: doc.data().pageUrl,
-          displayText: doc.data().pageUrl,
-          collection: COLLECTIONS.PAGE_SELECTIONS
-        })
-
-        return linkFactory(linkData);
-      }).forEach((listItem) => document.getElementById(SELECTORS.PAGES_LIST).appendChild(listItem));
-
-      mediaReferences.docs.map((doc) => {
-        // The text and the link should be the same for media
-        const linkData = Object.freeze({
-          id: doc.id,
-          href: doc.data().srcUrl,
-          displayText: doc.data().linkUrl,
-          collection: COLLECTIONS.MEDIA_REFERENCES
-        });
-
-        return linkFactory(linkData);
-      }).forEach((listItem) => document.getElementById(SELECTORS.MEDIA_LIST).appendChild(listItem));
-
-      linkReferences.docs.map((doc) => {
-        const linkData = Object.freeze({
-          id: doc.id,
-          href: doc.data().linkUrl,
-          displayText: doc.data().selectionText,
-          collection: COLLECTIONS.LINK_REFERENCES
-        });
-
-        return linkFactory(linkData);
-      }).forEach((listItem) => document.getElementById(SELECTORS.LINKS_LIST).appendChild(listItem));
+      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Logged in as ${email}`;
     } else {
+      displaySignInForm();
       // Google Auth
       document.getElementById('quickstart-button').textContent = 'Sign-in with Google';
-      document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
-      document.getElementById('quickstart-account-details').textContent = 'null';
+      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Login to start saving content`;
     }
     document.getElementById('quickstart-button').disabled = false;
   });
+
   document.addEventListener('click', handleClick, false);
   document.getElementById('quickstart-button').addEventListener('click', startSignIn, false);
 }
@@ -132,39 +77,57 @@ function handleClickDelete(target) {
  * Start the auth flow and authorizes to Firebase.
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
-function startAuth(interactive) {
-  // Request an OAuth token from the Chrome Identity API.
-  chrome.identity.getAuthToken({interactive: !!interactive}, function(token) {
-    if (chrome.runtime.lastError && !interactive) {
-      console.log('It was not possible to get a token programmatically.');
-    } else if(chrome.runtime.lastError) {
-      console.log(chrome.runtime.lastError);
-    } else if (token) {
-      // Authorize Firebase with the OAuth Access Token.
-      var credential = firebase.auth.GoogleAuthProvider.credential(null, token);
-      firebase.auth().signInWithCredential(credential).catch(function(error) {
-        // The OAuth token might have been invalidated. Lets' remove it from cache.
-        if (error.code === 'auth/invalid-credential') {
-          chrome.identity.removeCachedAuthToken({token: token}, function() {
-            startAuth(interactive);
-          });
-        }
+function startAuth(interactive, { email, password }) {
+  firebase.auth().signInWithEmailAndPassword(email, password).then((fireBaseUser) => {
+    if (fireBaseUser) {
+      document.getElementById('input-errors').style.visibility = "hidden";
+      document.getElementById('quickstart-button').disabled = true;
+    }
+
+  }).catch(function(error) {
+    displayError(error);
+    // The OAuth token might have been invalidated. Lets' remove it from cache.
+    if (error.code === 'auth/invalid-credential') {
+      chrome.identity.removeCachedAuthToken({token: token}, function() {
+        startAuth(interactive);
       });
-    } else {
-      console.error('The OAuth Token was null');
     }
   });
+}
+
+function displayError({ code, message }) {
+  const errorText = document.getElementById('input-errors');
+  
+  let errorMessage = message || 'Invalid credentials!';
+
+  errorText.style.visibility = 'visible';
+
+  document.getElementById('input-errors').textContent = errorMessage;
+}
+
+function hideSignInForm() {
+  document.getElementById('input-container').style.visibility = "hidden";
+}
+
+function displaySignInForm() {
+  document.getElementById('input-container').style.visibility = "visible";
+  document.getElementById('email-input').value = '';
+  document.getElementById('password-input').value = '';
 }
 
 /**
  * Starts the sign-in process.
  */
 function startSignIn() {
-  document.getElementById('quickstart-button').disabled = true;
   if (firebase.auth().currentUser) {
     firebase.auth().signOut();
+
+    displaySignInForm();
   } else {
-    startAuth(true);
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('password-input').value;
+
+    startAuth(true, { email, password });
   }
 }
 
