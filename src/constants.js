@@ -4,7 +4,8 @@ const SELECTORS = {
   TEXT_SELECTIONS_LIST: 'text-selections-list',
   LINKS_LIST: 'links-list',
   PAGES_LIST: 'pages-list',
-  HEADER_TITLE: 'header-title'
+  HEADER_TITLE: 'header-title',
+  CONTENT_TEXT: 'content-text'
 };
 
 const COLLECTIONS = {

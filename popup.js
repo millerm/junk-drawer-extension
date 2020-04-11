@@ -3,6 +3,8 @@ import { firebaseConfig } from './src/config.js';
 firebase.initializeApp(firebaseConfig);
 
 function initApp() {
+  showLoading();
+
   // Listen for auth state changes.
   firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
@@ -12,14 +14,14 @@ function initApp() {
       // Hide input form
       hideSignInForm();
 
+      document.getElementById('quickstart-button').style.display = 'block';
       document.getElementById('quickstart-button').textContent = 'Sign out';
-      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Logged in as ${email}`;
+      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Signed in as ${email}`;
+      document.querySelector(`.${SELECTORS.CONTENT_TEXT}`).textContent = 'See your saved content here.'
     } else {
       displaySignInForm();
-      // Google Auth
-      document.getElementById('quickstart-button').textContent = 'Sign-in with Google';
-      document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Login to start saving content`;
     }
+
     document.getElementById('quickstart-button').disabled = false;
   });
 
@@ -78,9 +80,11 @@ function handleClickDelete(target) {
  * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
  */
 function startAuth(interactive, { email, password }) {
+  showLoading();
+
   firebase.auth().signInWithEmailAndPassword(email, password).then((fireBaseUser) => {
     if (fireBaseUser) {
-      document.getElementById('input-errors').style.visibility = "hidden";
+      document.getElementById('input-errors').style.display = "none";
       document.getElementById('quickstart-button').disabled = true;
     }
 
@@ -97,22 +101,36 @@ function startAuth(interactive, { email, password }) {
 
 function displayError({ code, message }) {
   const errorText = document.getElementById('input-errors');
-  
+
   let errorMessage = message || 'Invalid credentials!';
 
-  errorText.style.visibility = 'visible';
+  errorText.style.display = 'block';
 
   document.getElementById('input-errors').textContent = errorMessage;
+  
+  displaySignInForm();
 }
 
 function hideSignInForm() {
-  document.getElementById('input-container').style.visibility = "hidden";
+  document.getElementById('input-container').style.display = "none";
 }
 
 function displaySignInForm() {
-  document.getElementById('input-container').style.visibility = "visible";
+  document.getElementById('input-container').style.display = "block";
+  document.getElementById('quickstart-button').style.display = 'block';
   document.getElementById('email-input').value = '';
   document.getElementById('password-input').value = '';
+  document.getElementById('quickstart-button').textContent = 'Sign in';
+  document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Sign in to start saving content`;
+}
+
+function showLoading() {
+  document.querySelector(`.${SELECTORS.CONTENT_TEXT}`).style.dislplay = 'none';
+  document.getElementById('input-container').style.display = "none";
+  document.getElementById('email-input').value = '';
+  document.getElementById('password-input').value = '';
+  document.getElementById(SELECTORS.HEADER_TITLE).textContent = `Loading...`;
+  document.getElementById('quickstart-button').style.display = 'none';
 }
 
 /**
@@ -120,6 +138,7 @@ function displaySignInForm() {
  */
 function startSignIn() {
   if (firebase.auth().currentUser) {
+    document.querySelector(`.${SELECTORS.CONTENT_TEXT}`).style.display = 'none';
     firebase.auth().signOut();
 
     displaySignInForm();
